@@ -70,7 +70,7 @@ def send_email():
         elif bank_name == 'test02':
             zips = list_dir(ATTACHMENT_PATH + bank_name)
             for index, item in enumerate(zips):
-                send('test02%d' % index+1, CONTENT_02, bank_name, item)
+                send('test02%d' % (index + 1), CONTENT_02, bank_name, item)
                 print('test02第%d封邮件发送成功，剩余%d封' % (index + 1, len(zips) - index - 1))
                 delay_send(10)
         elif bank_name == 'test03':

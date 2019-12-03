@@ -13,6 +13,16 @@
 * 邮件正文由HTML文件单独管理
 
 ## 使用说明
-脚本中有详细注释，部分代码业务性较强，结合背景能更好理解
+1. `send_email.py` 脚本文件
+    - `ATTACHMENT_PATH` 附件存放路径
+    - `SMTP_SERVER` SMTP服务地址
+    - `SMTP_PORT` SMTP服务端口
+    - `ACCOUNT` 邮箱账户
+    - `PASSWORD` 邮箱密码/授权码
+    - `FROM` 发件人
+    - `TO` 收件人列表
+    - `CC` 抄送列表
+    - `CONTENT_xx` 邮件正文存放路径
+ 
+2. `content.html` 邮件正文管理文件，邮件内容相关可以在这里编辑
 
-`content.html` 为邮件正文管理文件，邮件内容相关可以在这里编辑

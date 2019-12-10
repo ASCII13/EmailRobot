@@ -12,7 +12,7 @@
 * 根据附件数量发送邮件
 * 邮件正文由HTML文件单独管理
 
-## 使用说明
+## 代码导读
 1. `send_email.py` 脚本文件
     - `ATTACHMENT_PATH` 附件存放路径
     - `SMTP_SERVER` SMTP服务地址

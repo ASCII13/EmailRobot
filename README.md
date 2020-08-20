@@ -1,4 +1,9 @@
-# EmailRobot
+<h1 align="center">EmailRobot</h1>
+<p align="center">
+    <a href="https://github.com/ASCII13/EmailRobot/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/ASCII13/EmailRobot"></a>
+    <a href="https://github.com/ASCII13/EmailRobot/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/ASCII13/EmailRobot"></a>
+    <a href="https://github.com/ASCII13/EmailRobot/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/ASCII13/EmailRobot"></a>
+</p>
 
 ## 描述
 一个自动发送邮件的python脚本，已进行脱敏处理，根据自身情况重新配置相关参数，即可使用
@@ -9,7 +14,7 @@
 
 ## 功能
 * 在运行脚本的时候读取邮箱账户和密码，避免信息泄漏，提升安全性
-* 根据附件数量发送邮件
+* 根据附件数量智能发送邮件
 * 邮件正文由HTML文件单独管理
 
 ## 代码导读
@@ -25,4 +30,3 @@
     - `CONTENT_xx` 邮件正文存放路径
  
 2. `content.html` 邮件正文管理文件，邮件内容相关可以在这里编辑
-

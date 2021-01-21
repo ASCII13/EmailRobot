@@ -1,12 +1,12 @@
 <h1 align="center">EmailRobot</h1>
 <p align="center">
-    <a href="https://github.com/ASCII13/EmailRobot/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/ASCII13/EmailRobot"></a>
-    <a href="https://github.com/ASCII13/EmailRobot/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/ASCII13/EmailRobot"></a>
-    <a href="https://github.com/ASCII13/EmailRobot/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/ASCII13/EmailRobot"></a>
+    <a href="https://github.com/ASCII13/EmailRobot/stargazers"><img alt="stars" src="https://img.shields.io/github/stars/ASCII13/EmailRobot"></a>
+    <a href="https://github.com/ASCII13/EmailRobot/network"><img alt="forks" src="https://img.shields.io/github/forks/ASCII13/EmailRobot"></a>
+    <a href="https://github.com/ASCII13/EmailRobot/issues"><img alt="issues" src="https://img.shields.io/github/issues/ASCII13/EmailRobot"></a>
 </p>
 
 ## 描述
-一个自动发送邮件的python脚本，已进行脱敏处理，根据自身情况重新配置相关参数，即可使用
+一个自动发送邮件的 python 脚本，已进行脱敏处理，根据自身情况重新配置相关参数，即可使用
 
 ## 背景
 由于业务需要，对接了5个银行的智能POS，每次发版都需要将不同的渠道包通过邮件提交给各银行审核，部分银行对于单封邮件附件大小还有限制，

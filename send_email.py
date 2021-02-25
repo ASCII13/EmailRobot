@@ -17,7 +17,7 @@ ATTACHMENT_PATH = ''
 
 # smtp服务
 SMTP_SERVER = ''
-SMTP_PORT =
+SMTP_PORT = 
 
 # 邮箱账户
 ACCOUNT = input('请输入邮箱账号：')
@@ -25,20 +25,21 @@ PASSWORD = getpass.getpass('请输入邮箱密码：')
 
 # 发件人/收件人/抄送
 FROM = ACCOUNT
-TO = ['']
-CC = ['']
+TO = []
+CC = []
 
-# 邮件内容存放目录
-CONTENT_01 = ''
-CONTENT_02 = ''
-CONTENT_03 = ''
-CONTENT_04 = ''
-CONTENT_05 = ''
+# 邮件正文模版
+TEMPLATE = ''
 
 
-# 构建邮件
-def setup_msg(subject, email_content, attachment_name):
-
+def generate_msg(subject, body, attachment_name):
+    """
+    构建邮件
+    :param subject: 标题
+    :param body: 正文
+    :param attachment_name: 附件
+    :return:
+    """
     msg = MIMEMultipart()
 
     msg['From'] = FROM
@@ -46,7 +47,7 @@ def setup_msg(subject, email_content, attachment_name):
     msg['Cc'] = ','.join(CC)
     msg['Subject'] = Header(subject, 'utf-8')
 
-    msg.attach(MIMEText(email_content, 'html', 'utf-8'))
+    msg.attach(MIMEText(body, 'html', 'utf-8'))
 
     try:
         with open(attachment_name, 'rb') as f:
@@ -59,45 +60,40 @@ def setup_msg(subject, email_content, attachment_name):
         print('附件读取失败，原因：' + e)
 
 
-# 分渠道发送邮件
 def send_email():
+    """
+    分渠道发送
+    你可以在这里构建自己的发送逻辑
+    :return:
+    """
     banks = list_dir(ATTACHMENT_PATH)
-    for bank_name in banks:
-        if bank_name == 'test01':
-            send('test01', CONTENT_01, bank_name, '附件名')
-            print('test01已发送')
-            delay_send(10)
-        elif bank_name == 'test02':
-            zips = list_dir(ATTACHMENT_PATH + bank_name)
-            for index, item in enumerate(zips):
-                send('test02%d' % (index + 1), CONTENT_02, bank_name, item)
-                print('test02第%d封邮件发送成功，剩余%d封' % (index + 1, len(zips) - index - 1))
-                delay_send(10)
-        elif bank_name == 'test03':
-            send('test03', CONTENT_03, bank_name, '附件名')
-            print('test03已发送')
-            delay_send(10)
-        elif bank_name == 'test04':
-            send('test04', CONTENT_04, bank_name, '附件名')
-            print('test04已发送')
-            delay_send(10)
-        elif bank_name == 'test05':
-            send('test05', CONTENT_05, bank_name, '附件名')
-            print('test05已发送')
-        else:
-            print('附件不符合规定，请检查')
-            sys.exit(0)
+    # example
+    if 'a' in banks:
+        send('这是邮件标题', TEMAPLTE, 'a', '这是附件名称')
+        print('a已发送')
+        delay_send(6)
+    else:
+        print('未匹配到相关目录，请检查')
+        sys.exit(0)
     print('邮件已全部发送')
 
 
 def send(subject, email_content_path, bank_name, attachment):
+    """
+    发送邮件
+    :param subject: 邮件标题
+    :param email_content_path: 邮件正文路径
+    :param bank_name: 银行名称
+    :param attachment: 附件
+    :return:
+    """
     os.chdir(ATTACHMENT_PATH + bank_name)
     context = ssl.create_default_context()
     try:
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context) as smtp:
             smtp.login(ACCOUNT, PASSWORD)
 
-            msg = setup_msg(subject, get_email_content(email_content_path), attachment)
+            msg = generate_msg(subject, get_email_content(email_content_path), attachment)
 
             print('邮件发送中')
 
@@ -105,15 +101,20 @@ def send(subject, email_content_path, bank_name, attachment):
 
             print('邮件发送完成')
     except smtplib.SMTPException as e:
-        print('邮件发送失败，愿意：' + e)
+        print(bank_name + '邮件发送失败，原因：' + e)
 
 
 def get_email_content(content_path):
+    """
+    读取邮件正文
+    :param content_path: 正文模版路径
+    :return:
+    """
     try:
         with open(content_path, 'rb') as content:
             return content.read()
     except IOError as e:
-        print('获取邮件内容失败，原因：' + e)
+        print('邮件正文读取失败，原因：' + e)
 
 
 def delay_send(second):
@@ -125,8 +126,12 @@ def delay_send(second):
         count += 1
 
 
-# 过滤特殊文件 并 排序
 def list_dir(path):
+    """
+    过滤特殊文件
+    :param path: 附件路径
+    :return: 
+    """
     name_list = os.listdir(path)
     for item in name_list:
         if item.startswith('.'):

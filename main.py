@@ -10,6 +10,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
+from typing import AnyStr
 
 
 # 附件存放目录
@@ -29,35 +30,35 @@ TO = []
 CC = []
 
 # 邮件正文模版
-TEMPLATE = ''
+TEMPLATE = 'template.html'
 
 
-def generate_msg(subject, body, attachment_name):
+def generate_mail(subject: str, body: str, attachment_name: str) -> MIMEMultipart:
     """
     构建邮件
     :param subject: 标题
     :param body: 正文
-    :param attachment_name: 附件
+    :param attachment_name: 附件名称
     :return:
     """
-    msg = MIMEMultipart()
+    mail = MIMEMultipart()
 
-    msg['From'] = FROM
-    msg['To'] = ','.join(TO)
-    msg['Cc'] = ','.join(CC)
-    msg['Subject'] = Header(subject, 'utf-8')
+    mail['From'] = FROM
+    mail['To'] = ','.join(TO)
+    mail['Cc'] = ','.join(CC)
+    mail['Subject'] = Header(subject, 'utf-8')
 
-    msg.attach(MIMEText(body, 'html', 'utf-8'))
+    mail.attach(MIMEText(body, 'html', 'utf-8'))
 
     try:
         with open(attachment_name, 'rb') as f:
             mime = MIMEApplication(f.read())
             mime.add_header('Content-Disposition', 'attachment', filename=attachment_name)
 
-            msg.attach(mime)
-        return msg
+            mail.attach(mime)
+        return mail
     except IOError as e:
-        print('附件读取失败，原因：' + e)
+        print(f'附件读取失败：{e}')
 
 
 def send_email():
@@ -66,78 +67,79 @@ def send_email():
     你可以在这里构建自己的发送逻辑
     :return:
     """
-    banks = list_dir(ATTACHMENT_PATH)
+    banks = get_files_name(ATTACHMENT_PATH)
     # example
     if 'a' in banks:
         send('这是邮件标题', TEMAPLTE, 'a', '这是附件名称')
         print('a已发送')
-        delay_send(6)
+        delay(6)
     else:
         print('未匹配到相关目录，请检查')
         sys.exit(0)
     print('邮件已全部发送')
 
 
-def send(subject, email_content_path, bank_name, attachment):
+def send(subject: str, template_path: str, sub_path: str, attachment_name: str) -> None:
     """
     发送邮件
     :param subject: 邮件标题
-    :param email_content_path: 邮件正文路径
-    :param bank_name: 银行名称
-    :param attachment: 附件
+    :param template_path: 邮件模版路径
+    :param sub_path: 对应银行的目录名称
+    :param attachment_name: 附件名称
     :return:
     """
-    os.chdir(ATTACHMENT_PATH + bank_name)
+    os.chdir(f'{ATTACHMENT_PATH}{sub_path}')
     context = ssl.create_default_context()
+
     try:
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context) as smtp:
             smtp.login(ACCOUNT, PASSWORD)
 
-            msg = generate_msg(subject, get_email_content(email_content_path), attachment)
+            mail = generate_mail(subject, get_mail_template(template_path), attachment_name)
 
-            print('邮件发送中')
+            print('邮件正在发送，请稍后...')
 
-            smtp.sendmail(FROM, TO + CC, msg.as_string())
+            smtp.sendmail(FROM, TO + CC, mail.as_string())
 
-            print('邮件发送完成')
+            print(f'{sub_path}邮件发送完成')
     except smtplib.SMTPException as e:
-        print(bank_name + '邮件发送失败，原因：' + e)
+        print(f'{sub_path}邮件发送失败：{e}')
 
-
-def get_email_content(content_path):
+        
+def get_mail_template(path: str) -> AnyStr:
     """
-    读取邮件正文
-    :param content_path: 正文模版路径
-    :return:
+    读取邮件模版
+    :param path: 模版路径
+    :return: 
     """
     try:
-        with open(content_path, 'rb') as content:
+        with open(path, 'rb') as content:
             return content.read()
     except IOError as e:
-        print('邮件正文读取失败，原因：' + e)
+        print(f'邮件模版读取失败：{e}')
 
 
-def delay_send(second):
+def delay(second: int) -> None:
     count = 0
     while count < second:
         time_left = second - count
-        print('-------- %d 秒后发送下一封邮件' % time_left)
+        print(f'将在 {time_left} 秒后发送下一封邮件')
         time.sleep(1)
         count += 1
 
 
-def list_dir(path):
+def get_files_name(path: str) -> list:
     """
-    过滤特殊文件
-    :param path: 附件路径
-    :return: 
+    获取指定目录下包含的文件和目录的名称（过滤.开头的隐藏文件）
+    :param path: 目录路径
+    :return: 名称列表
     """
-    name_list = os.listdir(path)
-    for item in name_list:
-        if item.startswith('.'):
-            name_list.remove(item)
-    name_list.sort()
-    return name_list
+    names = os.listdir(path)
+    for name in names:
+        if name.startswith('.'):
+            names.remove(name)
+    names.sort()
+    return names
 
 
 if __name__ == '__main__':
